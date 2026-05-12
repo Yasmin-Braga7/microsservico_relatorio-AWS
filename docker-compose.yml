@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   relatorio:
     build:
@@ -17,7 +15,7 @@ services:
 
       # ── Banco de dados ─────────────────────────────────────────────────────
       # Configure no arquivo .env (nunca commitar credenciais)
-      DATABASE_URL: mysql://20261_projint5_manha:senac@12938@edumysql.acesso.rj.senac.br:3306/20261_projint5_manha_biblioteca_relatorio
+      DATABASE_URL: mysql://20261_projint5_manha:senac%4012938@edumysql.acesso.rj.senac.br:3306/20261_projint5_manha_biblioteca_relatorio
 
       # ── RabbitMQ (servidor externo da faculdade) ───────────────────────────
       RABBITMQ_URL: amqp://admin:admin@10.136.38.50:5672        # amqp://admin:adminadmin@academico3.rj.senac.br:5672

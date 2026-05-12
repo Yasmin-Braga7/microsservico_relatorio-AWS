@@ -3,15 +3,18 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Instala dependências (apenas arquivos de manifest primeiro para cache)
+# Instala dependências (incluindo dev para o Prisma CLI)
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # Copia o restante do código
 COPY . .
 
 # Gera o Prisma Client
 RUN npx prisma generate
+
+# Remove as dependências de desenvolvimento para economizar espaço
+RUN npm prune --omit=dev
 
 # ─── Imagem final (menor) ─────────────────────────────────────────────────────
 FROM node:22-alpine
