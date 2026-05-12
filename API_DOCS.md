@@ -10,7 +10,7 @@ Abaixo está o manual de como utilizar os endpoints expostos pelo Restify.
 
 A finalidade dessas rotas é criar e buscar registros globais de relatórios.
 
-### `POST /`
+### `POST /reservas`
 Cria um novo relatório geral (referenciando IDs de outras entidades).
 * **Corpo (JSON)**:
 ```json
@@ -22,13 +22,13 @@ Cria um novo relatório geral (referenciando IDs de outras entidades).
 }
 ```
 
-### `GET /`
+### `GET /reservas`
 Lista todos os relatórios cadastrados (exceto os que tem `status = 0`).
 
-### `GET /:id`
-Busca um relatório específico pelo seu ID (exemplo: `GET /5`).
+### `GET /reservas/:id`
+Busca um relatório específico pelo seu ID (exemplo: `GET /reservas/5`).
 
-### `PATCH /:id/status`
+### `PATCH /reservas/:id/status`
 Altera apenas o status do relatório.
 * **Corpo (JSON)**:
 ```json
@@ -37,13 +37,13 @@ Altera apenas o status do relatório.
 }
 ```
 
-### `DELETE /:id`
+### `DELETE /reservas/:id`
 Inativa um relatório (soft delete), alterando seu `status` para `0`.
 
-### `DELETE /limpar-antigos`
+### `DELETE /reservas/limpar-antigos`
 Inativa todos os relatórios que foram gerados há mais de 2 anos.
 
-### `GET /exportar/csv`
+### `GET /reservas/exportar/csv`
 Retorna os dados dos relatórios para exportação (atualmente retorna JSON, que pode ser convertido).
 
 ---
@@ -52,7 +52,7 @@ Retorna os dados dos relatórios para exportação (atualmente retorna JSON, que
 
 Salvam "fotografias" dos dados estatísticos dos livros em um dado momento.
 
-### `POST /livros`
+### `POST /reservas/livros`
 Gera um novo snapshot estatístico para um livro.
 * **Corpo (JSON)**:
 ```json
@@ -64,13 +64,13 @@ Gera um novo snapshot estatístico para um livro.
 }
 ```
 
-### `GET /livros`
+### `GET /reservas/livros`
 Lista todos os snapshots de livros, ordenados do mais recente para o mais antigo.
 
-### `GET /livros/:id`
+### `GET /reservas/livros/:id`
 Busca um snapshot específico pelo ID.
 
-### `GET /livros/top`
+### `GET /reservas/livros/top`
 Traz o **Top 10** dos livros mais lidos, somando os empréstimos registrados nos snapshots.
 
 ---
@@ -79,7 +79,7 @@ Traz o **Top 10** dos livros mais lidos, somando os empréstimos registrados nos
 
 Focados nas métricas dos usuários (quantidade de multas, empréstimos, atrasos).
 
-### `POST /usuarios`
+### `POST /reservas/usuarios`
 Registra a volumetria de um usuário no momento atual.
 * **Corpo (JSON)**:
 ```json
@@ -91,13 +91,13 @@ Registra a volumetria de um usuário no momento atual.
 }
 ```
 
-### `GET /usuarios`
+### `GET /reservas/usuarios`
 Lista todos os snapshots de usuários registrados.
 
-### `GET /usuarios/:id`
+### `GET /reservas/usuarios/:id`
 Busca os dados de snapshot de um usuário específico pelo ID.
 
-### `GET /usuarios/inadimplentes`
+### `GET /reservas/usuarios/inadimplentes`
 Retorna todos os snapshots de usuários que possuem pelo menos 1 multa, ordenados de forma decrescente (quem tem mais multas primeiro).
 
 ---
@@ -106,7 +106,7 @@ Retorna todos os snapshots de usuários que possuem pelo menos 1 multa, ordenado
 
 Guarda dados históricos sobre como um empréstimo ocorreu.
 
-### `POST /emprestimos`
+### `POST /reservas/emprestimos`
 Registra um instantâneo de um empréstimo (datas e multas).
 * **Corpo (JSON)**:
 ```json
@@ -119,10 +119,10 @@ Registra um instantâneo de um empréstimo (datas e multas).
 ```
 *(Nota: `data_dev` é opcional)*
 
-### `GET /emprestimos`
+### `GET /reservas/emprestimos`
 Lista os históricos dos empréstimos.
 
-### `GET /emprestimos/:id`
+### `GET /reservas/emprestimos/:id`
 Busca o registro de um snapshot de empréstimo pelo ID.
 
 ---
@@ -131,7 +131,7 @@ Busca o registro de um snapshot de empréstimo pelo ID.
 
 Rotas prontas para alimentar gráficos de painéis administrativos.
 
-### `GET /dashboard/kpis`
+### `GET /reservas/dashboard/kpis`
 Retorna a volumetria total do sistema (livros, usuários e empréstimos totais que existem nos snapshots).
 * **Resposta esperada**:
 ```json
@@ -145,7 +145,7 @@ Retorna a volumetria total do sistema (livros, usuários e empréstimos totais q
 }
 ```
 
-### `GET /financeiro/multas-total`
+### `GET /reservas/financeiro/multas-total`
 Faz a somatória financeira de todas as multas aplicadas registradas nos snapshots de empréstimo.
 * **Resposta esperada**:
 ```json
