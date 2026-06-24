@@ -1,4 +1,4 @@
-const restify = require('restify');
+const fastify = require('fastify')({ logger: false });
 require('dotenv').config();
 
 const rabbitmq = require('./config/rabbitmq');
@@ -8,25 +8,20 @@ rabbitmq.connect().catch(err => {
     console.error('[RabbitMQ] Erro na conexão inicial:', err.message);
 });
 
-const server = restify.createServer({
-    name: 'microsservico_relatorio'
-});
-
-server.use(restify.plugins.bodyParser());
-server.use(restify.plugins.queryParser());
-
 // Registrando rotas
 const relatorioRoutes = require('./routes/relatorio.routes');
-relatorioRoutes(server);
+fastify.register(relatorioRoutes);
 
 // Rota de Healthcheck (utilizada pelo Docker)
-server.get('/health', (req, res, next) => {
-    res.send(200, { status: 'UP', timestamp: new Date() });
-    return next();
+fastify.get('/health', async () => {
+    return { status: 'UP', timestamp: new Date() };
 });
 
-
 const PORT = process.env.PORT || 9504;
-server.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+fastify.listen({ port: PORT, host: '0.0.0.0' }, (err, address) => {
+    if (err) {
+        console.error(err);
+        process.exit(1);
+    }
+    console.log(`Servidor rodando em ${address}`);
 });

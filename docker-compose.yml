@@ -7,33 +7,28 @@ services:
     restart: unless-stopped
 
     ports:
-      - "9504:9504"        # Porta pública do microsserviço (mapeada no servidor)
+      - "9504:9504"
 
     environment:
       PORT: 9504
       NODE_ENV: production
+
+      # ── Banco de dados ─────────────────────────────────────────────────────
+      DATABASE_URL: "mysql://20261_projint5_manha:senac%4012938@edumysql.acesso.rj.senac.br:3306/20261_projint5_manha_biblioteca_relatorio"
+
+      # ── RabbitMQ ───────────────────────────────────────────────────────────
+      RABBITMQ_URL: "amqp://admin:admin@10.136.38.50:5672"
+      RABBITMQ_RECONNECT_DELAY: 5000
+
+      # ── Multa por dia de atraso ────────────────────────────────────────────
+      VALOR_MULTA_DIA: ${VALOR_MULTA_DIA:-2.50}
+
+      # ── Infisical (gestão de segredos) ─────────────────────────────────────
       INFISICAL_CLIENT_ID: "69e967eb-1e7d-4667-8510-e810ce9ff5b5"
       INFISICAL_CLIENT_SECRET: "656e3fe13714a809fafb5ae753d7238f4a28d191771b4f6bf80cd6c0b6548572"
       INFISICAL_PROJECT_ID: "7eb7b13c-6700-4e6b-97a1-0fcd5779a698"
       INFISICAL_ENV: "dev"
       INFISICAL_SITE_URL: "https://app.infisical.com"
-
-      # ── Banco de dados ─────────────────────────────────────────────────────
-      # Configure no arquivo .env (nunca commitar credenciais)
-      DATABASE_URL: mysql://20261_projint5_manha:senac%4012938@edumysql.acesso.rj.senac.br:3306/20261_projint5_manha_biblioteca_relatorio
-
-      # ── RabbitMQ (servidor externo da faculdade) ───────────────────────────
-      RABBITMQ_URL: amqp://admin:admin@10.136.38.50:5672        # amqp://admin:adminadmin@academico3.rj.senac.br:5672
-      RABBITMQ_RECONNECT_DELAY: 5000         # ms entre tentativas de reconexão
-
-      # ── Multa por dia de atraso ────────────────────────────────────────────
-      VALOR_MULTA_DIA: ${VALOR_MULTA_DIA:-2.50}
-
-    # Garante que o container só sobe se o DB estiver acessível
-    # (útil quando o DB também estiver no compose; remova se for externo)
-    # depends_on:
-    #   db:
-    #     condition: service_healthy
 
     networks:
       - biblioteca-net

@@ -1,103 +1,112 @@
 const service = require('../services/relatorio.service');
 
-async function gerarSnapshotLivro(req, res) {
+// ── Snapshots de Livros ────────────────────────────────────────────────────────
+async function gerarSnapshotLivro(req, reply) {
     const data = await service.gerarSnapshotLivro(req.body);
-    res.send(201, { success: true, data });
+    return reply.code(201).send({ success: true, data });
 }
 
-async function dashboardKpis(req, res) {
+async function dashboardKpis(req, reply) {
     const data = await service.dashboardKpis();
-    res.send(200, { success: true, data });
+    return reply.send({ success: true, data });
 }
 
-async function topLivrosLidos(req, res) {
+async function topLivrosLidos(req, reply) {
     const data = await service.topLivrosLidos();
-    res.send(200, { success: true, data });
+    return reply.send({ success: true, data });
 }
 
-async function usuariosInadimplentes(req, res) {
-    const data = await service.usuariosInadimplentes();
-    res.send(200, { success: true, data });
-}
-
-async function criar(req, res) {
-    const data = await service.criar(req.body);
-    res.send(201, { success: true, data });
-}
-
-async function listar(req, res) {
-    const data = await service.listar();
-    res.send(200, { success: true, data });
-}
-
-async function buscarPorId(req, res) {
-    const data = await service.buscarPorId(req.params.id);
-    res.send(200, { success: true, data });
-}
-
-async function deletar(req, res) {
-    await service.deletar(req.params.id);
-    res.send(204);
-}
-
-async function alterarStatus(req, res) {
-    const data = await service.alterarStatus(req.params.id, req.body);
-    res.send(200, { success: true, data });
-}
-
-async function limparAntigos(req, res) {
-    const data = await service.limparAntigos();
-    res.send(200, { success: true, data });
-}
-
-async function exportarCSV(req, res) {
-    const data = await service.exportarCSV();
-    res.send(200, { success: true, data });
-}
-
-async function listarSnapshotLivros(req, res) {
+async function listarSnapshotLivros(req, reply) {
     const data = await service.listarSnapshotLivros();
-    res.send(200, { success: true, data });
+    return reply.send({ success: true, data });
 }
 
-async function buscarSnapshotLivroId(req, res) {
+async function buscarSnapshotLivroId(req, reply) {
     const data = await service.buscarSnapshotLivroId(req.params.id);
-    res.send(200, { success: true, data });
+    if (!data) return reply.code(404).send({ success: false, error: 'Snapshot de livro não encontrado.' });
+    return reply.send({ success: true, data });
 }
 
-async function gerarSnapshotUsuario(req, res) {
+// ── Snapshots de Usuários ──────────────────────────────────────────────────────
+async function gerarSnapshotUsuario(req, reply) {
     const data = await service.gerarSnapshotUsuario(req.body);
-    res.send(201, { success: true, data });
+    return reply.code(201).send({ success: true, data });
 }
 
-async function listarSnapshotUsuarios(req, res) {
+async function usuariosInadimplentes(req, reply) {
+    const data = await service.usuariosInadimplentes();
+    return reply.send({ success: true, data });
+}
+
+async function listarSnapshotUsuarios(req, reply) {
     const data = await service.listarSnapshotUsuarios();
-    res.send(200, { success: true, data });
+    return reply.send({ success: true, data });
 }
 
-async function buscarSnapshotUsuarioId(req, res) {
+async function buscarSnapshotUsuarioId(req, reply) {
     const data = await service.buscarSnapshotUsuarioId(req.params.id);
-    res.send(200, { success: true, data });
+    if (!data) return reply.code(404).send({ success: false, error: 'Snapshot de usuário não encontrado.' });
+    return reply.send({ success: true, data });
 }
 
-async function gerarSnapshotEmprestimo(req, res) {
+// ── Snapshots de Empréstimos ───────────────────────────────────────────────────
+async function gerarSnapshotEmprestimo(req, reply) {
     const data = await service.gerarSnapshotEmprestimo(req.body);
-    res.send(201, { success: true, data });
+    return reply.code(201).send({ success: true, data });
 }
 
-async function listarSnapshotEmprestimos(req, res) {
+async function listarSnapshotEmprestimos(req, reply) {
     const data = await service.listarSnapshotEmprestimos();
-    res.send(200, { success: true, data });
+    return reply.send({ success: true, data });
 }
 
-async function buscarSnapshotEmprestimoId(req, res) {
+async function buscarSnapshotEmprestimoId(req, reply) {
     const data = await service.buscarSnapshotEmprestimoId(req.params.id);
-    res.send(200, { success: true, data });
+    if (!data) return reply.code(404).send({ success: false, error: 'Snapshot de empréstimo não encontrado.' });
+    return reply.send({ success: true, data });
 }
 
-async function totalMultas(req, res) {
+// ── Relatórios centrais ────────────────────────────────────────────────────────
+async function criar(req, reply) {
+    const data = await service.criar(req.body);
+    return reply.code(201).send({ success: true, data });
+}
+
+async function listar(req, reply) {
+    const data = await service.listar();
+    return reply.send({ success: true, data });
+}
+
+async function buscarPorId(req, reply) {
+    const data = await service.buscarPorId(req.params.id);
+    if (!data) return reply.code(404).send({ success: false, error: 'Relatório não encontrado.' });
+    return reply.send({ success: true, data });
+}
+
+async function deletar(req, reply) {
+    await service.deletar(req.params.id);
+    return reply.code(204).send();
+}
+
+async function alterarStatus(req, reply) {
+    const data = await service.alterarStatus(req.params.id, req.body);
+    return reply.send({ success: true, data });
+}
+
+async function limparAntigos(req, reply) {
+    const data = await service.limparAntigos();
+    return reply.send({ success: true, data });
+}
+
+async function exportarCSV(req, reply) {
+    const data = await service.exportarCSV();
+    return reply.send({ success: true, data });
+}
+
+// ── Financeiro ─────────────────────────────────────────────────────────────────
+async function totalMultas(req, reply) {
     const data = await service.totalMultas();
-    res.send(200, { success: true, data });
+    return reply.send({ success: true, data });
 }
 
 module.exports = {

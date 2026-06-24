@@ -1,35 +1,35 @@
 const ctrl = require('../controllers/relatorios.controller');
 
-function relatorioRoutes(server) {
-    // Endpoints Centrais de Relatórios
-    server.post('/reservas', ctrl.criar);
-    server.get('/reservas', ctrl.listar);
-    server.get('/reservas/:id', ctrl.buscarPorId);
-    server.del('/reservas/:id', ctrl.deletar);
-    server.patch('/reservas/:id/status', ctrl.alterarStatus);
-    server.del('/reservas/limpar-antigos', ctrl.limparAntigos);
-    server.get('/reservas/exportar/csv', ctrl.exportarCSV);
+async function relatorioRoutes(fastify) {
+    // ── Relatórios centrais ────────────────────────────────────────────────
+    fastify.post('/relatorios', ctrl.criar);
+    fastify.get('/relatorios', ctrl.listar);
+    fastify.get('/relatorios/exportar/csv', ctrl.exportarCSV);
+    fastify.delete('/relatorios/limpar-antigos', ctrl.limparAntigos);
+    fastify.get('/relatorios/:id', ctrl.buscarPorId);
+    fastify.delete('/relatorios/:id', ctrl.deletar);
+    fastify.patch('/relatorios/:id/status', ctrl.alterarStatus);
 
-    // Endpoints de Livros
-    server.post('/reservas/livros', ctrl.gerarSnapshotLivro);
-    server.get('/reservas/livros', ctrl.listarSnapshotLivros);
-    server.get('/reservas/livros/:id', ctrl.buscarSnapshotLivroId);
-    server.get('/reservas/livros/top', ctrl.topLivrosLidos);
+    // ── Snapshots de Livros ────────────────────────────────────────────────
+    fastify.post('/relatorios/livros', ctrl.gerarSnapshotLivro);
+    fastify.get('/relatorios/livros', ctrl.listarSnapshotLivros);
+    fastify.get('/relatorios/livros/top', ctrl.topLivrosLidos);
+    fastify.get('/relatorios/livros/:id', ctrl.buscarSnapshotLivroId);
 
-    // Endpoints de Usuários
-    server.post('/reservas/usuarios', ctrl.gerarSnapshotUsuario);
-    server.get('/reservas/usuarios', ctrl.listarSnapshotUsuarios);
-    server.get('/reservas/usuarios/:id', ctrl.buscarSnapshotUsuarioId);
-    server.get('/reservas/usuarios/inadimplentes', ctrl.usuariosInadimplentes);
+    // ── Snapshots de Usuários ──────────────────────────────────────────────
+    fastify.post('/relatorios/usuarios', ctrl.gerarSnapshotUsuario);
+    fastify.get('/relatorios/usuarios', ctrl.listarSnapshotUsuarios);
+    fastify.get('/relatorios/usuarios/inadimplentes', ctrl.usuariosInadimplentes);
+    fastify.get('/relatorios/usuarios/:id', ctrl.buscarSnapshotUsuarioId);
 
-    // Endpoints de Empréstimos
-    server.post('/reservas/emprestimos', ctrl.gerarSnapshotEmprestimo);
-    server.get('/reservas/emprestimos', ctrl.listarSnapshotEmprestimos);
-    server.get('/reservas/emprestimos/:id', ctrl.buscarSnapshotEmprestimoId);
+    // ── Snapshots de Empréstimos ───────────────────────────────────────────
+    fastify.post('/relatorios/emprestimos', ctrl.gerarSnapshotEmprestimo);
+    fastify.get('/relatorios/emprestimos', ctrl.listarSnapshotEmprestimos);
+    fastify.get('/relatorios/emprestimos/:id', ctrl.buscarSnapshotEmprestimoId);
 
-    // Dashboards e Financeiro
-    server.get('/reservas/dashboard/kpis', ctrl.dashboardKpis);
-    server.get('/reservas/financeiro/multas-total', ctrl.totalMultas);
+    // ── Dashboard e Financeiro ─────────────────────────────────────────────
+    fastify.get('/relatorios/dashboard/kpis', ctrl.dashboardKpis);
+    fastify.get('/relatorios/financeiro/multas-total', ctrl.totalMultas);
 }
 
 module.exports = relatorioRoutes;
