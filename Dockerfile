@@ -1,43 +1,35 @@
-# ─── Estágio de build ────────────────────────────────────────────────────────
-FROM node:22-alpine AS builder
+FROM node:22-slim AS builder
 
 WORKDIR /app
 
-# Instala OpenSSL 1.1 (necessário para o Prisma engine no Alpine 3.20+)
-RUN apk add --no-cache openssl1.1-compat
+# Instalar OpenSSL para que o Prisma gere o engine correto
+RUN apk add --no-cache openssl
 
-# Instala dependências (incluindo dev para o Prisma CLI)
 COPY package*.json ./
 RUN npm ci
 
-# Copia o restante do código
-COPY . .
-
-# Gera o Prisma Client
+COPY prisma ./prisma/
 RUN npx prisma generate
 
-# Remove as dependências de desenvolvimento para economizar espaço
-RUN npm prune --omit=dev
-
-# ─── Imagem final (menor) ─────────────────────────────────────────────────────
-FROM node:22-alpine
+FROM node:22-slim AS production
 
 WORKDIR /app
 
-# Instala OpenSSL 1.1 (necessário para o Prisma engine no Alpine 3.20+)
-RUN apk add --no-cache openssl1.1-compat
+ENV NODE_ENV=production
 
-# Copia artefatos do estágio de build
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/src          ./src
-COPY --from=builder /app/prisma       ./prisma
-COPY --from=builder /app/package.json ./package.json
+# Instalar OpenSSL no ambiente de execução de produção
+RUN apk add --no-cache openssl
 
-# Porta exposta (definida no docker-compose via PORT env)
+COPY package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/node_modules/.prisma   ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
+
+COPY prisma ./prisma/
+COPY src ./src/
+
 EXPOSE 9504
-
-# Health check interno do Docker
-HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD wget -qO- http://localhost:9504/health || exit 1
 
 CMD ["node", "src/server.js"]
