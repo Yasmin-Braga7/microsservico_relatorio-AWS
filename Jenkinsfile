@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        PROJECT_NAME     = 'microsservico_relatorio'
-        COMPOSE_FILE     = 'docker-compose.yml'
-        CONTAINER_NAME   = 'biblioteca-relatorio'
+        PROJECT_NAME   = 'microsservico_relatorio'
+        COMPOSE_FILE   = 'docker-compose.yml'
+        CONTAINER_NAME = 'biblioteca-relatorio'
     }
 
     stages {
@@ -22,25 +22,30 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                // --build garante rebuild; --remove-orphans remove containers obsoletos
                 sh 'docker compose -f ${COMPOSE_FILE} up -d --build --remove-orphans'
             }
         }
 
         stage('Health Check') {
             steps {
-                // Aguarda até 30 s para o serviço responder
                 sh '''
                     echo "Aguardando o serviço iniciar..."
-                    for i in $(seq 1 10); do
-                        if docker exec ${CONTAINER_NAME} wget -qO- http://localhost:9504/health > /dev/null 2>&1; then
-                            echo "Serviço respondendo com sucesso!"
+                    for i in $(seq 1 15); do
+                        STATUS=$(docker inspect --format="{{.State.Health.Status}}" ${CONTAINER_NAME} 2>/dev/null || echo "none")
+                        if [ "$STATUS" = "healthy" ]; then
+                            echo "Serviço respondendo com sucesso! (healthy)"
                             exit 0
                         fi
-                        echo "Tentativa $i/10 — aguardando 3s..."
-                        sleep 3
+                        # Fallback: tenta wget direto caso o HEALTHCHECK ainda não tenha rodado
+                        if docker exec ${CONTAINER_NAME} wget -qO- http://localhost:9504/health > /dev/null 2>&1; then
+                            echo "Serviço respondendo com sucesso! (wget)"
+                            exit 0
+                        fi
+                        echo "Tentativa $i/15 — status: $STATUS — aguardando 5s..."
+                        sleep 5
                     done
                     echo "Serviço não respondeu dentro do prazo."
+                    docker compose -f ${COMPOSE_FILE} logs --tail=30
                     exit 1
                 '''
             }
