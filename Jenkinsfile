@@ -15,28 +15,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                // Comando batch para Windows
-                bat 'docker-compose build'
+                sh 'docker-compose build'
             }
         }
 
         stage('Deploy') {
             steps {
-                // Comando batch para Windows para subir os containers
-                bat 'docker-compose up -d'
+                sh 'docker-compose up -d'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline Windows finalizada!'
+            echo 'Pipeline finalizada!'
         }
         success {
-            echo 'Deploy realizado com sucesso no ambiente Windows.'
+            echo 'Deploy realizado com sucesso.'
         }
         failure {
-            echo 'Ocorreu um erro no pipeline do Windows.'
+            echo 'Ocorreu um erro no pipeline.'
         }
     }
 }
