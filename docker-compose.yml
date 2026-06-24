@@ -1,5 +1,5 @@
 services:
-  relatorio:
+  biblioteca-relatorio:
     build:
       context: .
       dockerfile: Dockerfile
